@@ -1,0 +1,594 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#10141B;
+    --surface:#181F29;
+    --surface-raised:#1F2733;
+    --border:#2A3441;
+    --border-hi:#3A4756;
+    --amber:#FFB020;
+    --amber-dim:#5B4520;
+    --teal:#2DD4BF;
+    --teal-dim:#1B4A45;
+    --red:#FF5C5C;
+    --red-dim:#4A2323;
+    --text:#EDEFF3;
+    --muted:#8892A0;
+    --mono:'IBM Plex Mono',monospace;
+    --sans:'IBM Plex Sans',sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  #fo-root{
+    font-family:var(--sans);
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    padding:0;
+  }
+  #fo-root *{box-sizing:border-box;}
+
+  /* ---------- header ---------- */
+  .fo-header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 24px;border-bottom:1px solid var(--border);
+    flex-wrap:wrap;gap:12px;
+  }
+  .fo-logo{display:flex;align-items:center;gap:10px;}
+  .fo-logo-mark{
+    width:30px;height:30px;border:2px solid var(--amber);border-radius:4px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-size:11px;font-weight:700;color:var(--amber);
+    transform:rotate(0deg);
+  }
+  .fo-logo-text{font-family:var(--mono);font-weight:700;letter-spacing:2px;font-size:15px;}
+  .fo-logo-sub{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:1px;}
+
+  /* role switch - HMI rocker style */
+  .fo-switch-wrap{display:flex;align-items:center;gap:10px;}
+  .fo-switch-label{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--muted);}
+  .fo-switch{
+    position:relative;width:132px;height:36px;background:var(--surface-raised);
+    border:1px solid var(--border-hi);border-radius:6px;cursor:pointer;
+    display:flex;align-items:center;padding:3px;user-select:none;
+  }
+  .fo-switch-thumb{
+    position:absolute;top:3px;left:3px;width:62px;height:28px;background:var(--amber);
+    border-radius:4px;transition:transform .18s ease,background .18s ease;
+    box-shadow:0 0 8px rgba(255,176,32,.5);
+  }
+  .fo-switch.client .fo-switch-thumb{transform:translateX(64px);background:var(--teal);box-shadow:0 0 8px rgba(45,212,191,.5);}
+  .fo-switch-opt{
+    position:relative;z-index:1;width:50%;text-align:center;font-family:var(--mono);
+    font-size:10px;font-weight:700;letter-spacing:1px;color:var(--bg);
+  }
+  .fo-switch-opt.inactive{color:var(--muted);}
+
+  /* ---------- nav tabs ---------- */
+  .fo-nav{
+    display:flex;gap:2px;padding:0 24px;border-bottom:1px solid var(--border);
+    overflow-x:auto;
+  }
+  .fo-tab{
+    font-family:var(--mono);font-size:12px;letter-spacing:1px;color:var(--muted);
+    padding:14px 18px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;
+    display:flex;align-items:center;gap:8px;
+  }
+  .fo-tab .fo-count{
+    background:var(--surface-raised);color:var(--text);border-radius:10px;
+    padding:1px 7px;font-size:10px;
+  }
+  .fo-tab.active{color:var(--text);border-bottom-color:var(--amber);}
+  .fo-nav.client .fo-tab.active{border-bottom-color:var(--teal);}
+
+  /* ---------- content ---------- */
+  .fo-content{padding:20px 24px 60px;max-width:1100px;margin:0 auto;}
+  .fo-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:10px;flex-wrap:wrap;}
+  .fo-toolbar-title{font-size:13px;color:var(--muted);font-family:var(--mono);}
+  .fo-client-filter{
+    background:var(--surface);border:1px solid var(--border-hi);color:var(--text);
+    font-family:var(--mono);font-size:12px;padding:8px 10px;border-radius:5px;
+  }
+  .fo-btn{
+    font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.5px;
+    background:var(--amber);color:#1A1400;border:none;border-radius:5px;
+    padding:9px 16px;cursor:pointer;
+  }
+  .fo-btn:hover{filter:brightness(1.08);}
+  .fo-btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--border-hi);}
+  .fo-btn.teal{background:var(--teal);color:#032620;}
+
+  /* ---------- cards grid ---------- */
+  .fo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;}
+  .fo-card{
+    background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:16px;position:relative;border-left:3px solid var(--border-hi);
+  }
+  .fo-card.status-open{border-left-color:var(--amber);}
+  .fo-card.status-progress{border-left-color:var(--teal);}
+  .fo-card.status-resolved{border-left-color:#4A5568;}
+  .fo-card.priority-high{border-left-color:var(--red);}
+  .fo-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+  .fo-tagid{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:1px;}
+  .fo-dot{width:9px;height:9px;border-radius:50%;margin-top:3px;flex-shrink:0;}
+  .fo-dot.open{background:var(--amber);box-shadow:0 0 6px rgba(255,176,32,.7);}
+  .fo-dot.progress{background:var(--teal);box-shadow:0 0 6px rgba(45,212,191,.7);}
+  .fo-dot.resolved{background:#4A5568;}
+  .fo-card-title{font-size:15px;font-weight:600;margin:0 0 4px;}
+  .fo-card-sub{font-size:12px;color:var(--muted);margin:0 0 10px;}
+  .fo-card-body{font-size:13px;color:#C5CAD2;line-height:1.5;margin-bottom:10px;}
+  .fo-badge-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+  .fo-badge{
+    font-family:var(--mono);font-size:10px;letter-spacing:.5px;padding:3px 8px;
+    border-radius:3px;background:var(--surface-raised);color:var(--muted);border:1px solid var(--border-hi);
+  }
+  .fo-badge.amber{color:var(--amber);border-color:var(--amber-dim);}
+  .fo-badge.teal{color:var(--teal);border-color:var(--teal-dim);}
+  .fo-badge.red{color:var(--red);border-color:var(--red-dim);}
+  .fo-progress-track{height:5px;background:var(--surface-raised);border-radius:3px;overflow:hidden;margin-bottom:10px;}
+  .fo-progress-fill{height:100%;background:var(--teal);}
+  .fo-card-actions{display:flex;gap:8px;margin-top:10px;}
+  .fo-link-btn{
+    font-family:var(--mono);font-size:11px;background:none;border:none;color:var(--muted);
+    cursor:pointer;padding:0;text-decoration:underline;
+  }
+  .fo-link-btn:hover{color:var(--text);}
+
+  .fo-empty{
+    text-align:center;padding:50px 20px;color:var(--muted);font-family:var(--mono);font-size:13px;
+    border:1px dashed var(--border-hi);border-radius:8px;
+  }
+
+  /* ---------- modal ---------- */
+  .fo-overlay{
+    position:fixed;inset:0;background:rgba(8,10,14,.7);display:flex;align-items:center;
+    justify-content:center;z-index:50;padding:16px;
+  }
+  .fo-modal{
+    background:var(--surface);border:1px solid var(--border-hi);border-radius:10px;
+    width:100%;max-width:460px;max-height:90vh;overflow-y:auto;padding:22px;
+  }
+  .fo-modal h3{margin:0 0 16px;font-size:15px;font-family:var(--mono);letter-spacing:.5px;}
+  .fo-field{margin-bottom:12px;}
+  .fo-field label{display:block;font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:5px;letter-spacing:.5px;}
+  .fo-field input,.fo-field select,.fo-field textarea{
+    width:100%;background:var(--bg);border:1px solid var(--border-hi);color:var(--text);
+    border-radius:5px;padding:9px 10px;font-family:var(--sans);font-size:13px;
+  }
+  .fo-field textarea{resize:vertical;min-height:60px;}
+  .fo-field-row{display:flex;gap:10px;}
+  .fo-field-row .fo-field{flex:1;}
+  .fo-modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;}
+
+  .fo-loading{padding:60px;text-align:center;color:var(--muted);font-family:var(--mono);font-size:12px;}
+  @media (max-width:600px){
+    .fo-header{padding:14px 16px;}
+    .fo-content{padding:16px 16px 50px;}
+    .fo-nav{padding:0 16px;}
+  }
+</style>
+
+<div id="fo-root">
+  <div class="fo-header">
+    <div class="fo-logo">
+      <div class="fo-logo-mark">FO</div>
+      <div>
+        <div class="fo-logo-text">FIELDOPS</div>
+        <div class="fo-logo-sub">AUTOMATION SERVICE LOG</div>
+      </div>
+    </div>
+    <div class="fo-switch-wrap">
+      <span class="fo-switch-label">MODE</span>
+      <div class="fo-switch" id="fo-role-switch">
+        <div class="fo-switch-thumb"></div>
+        <div class="fo-switch-opt" id="fo-opt-eng">ENGR</div>
+        <div class="fo-switch-opt inactive" id="fo-opt-cli">CLIENT</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fo-nav" id="fo-nav">
+    <div class="fo-tab active" data-tab="visits">SITE VISITS <span class="fo-count" id="cnt-visits">0</span></div>
+    <div class="fo-tab" data-tab="projects">PROJECTS <span class="fo-count" id="cnt-projects">0</span></div>
+    <div class="fo-tab" data-tab="tickets">TICKETS <span class="fo-count" id="cnt-tickets">0</span></div>
+  </div>
+
+  <div class="fo-content">
+    <div class="fo-toolbar">
+      <div class="fo-toolbar-title" id="fo-toolbar-title">ALL RECORDS</div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <select class="fo-client-filter" id="fo-client-select"></select>
+        <button class="fo-btn" id="fo-add-btn">+ NEW</button>
+      </div>
+    </div>
+    <div id="fo-body"><div class="fo-loading">LOADING RECORDS…</div></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const state = {
+    role: 'engineer', // 'engineer' | 'client'
+    tab: 'visits',
+    clientFilter: 'ALL',
+    visits: [],
+    projects: [],
+    tickets: [],
+    loaded: false
+  };
+
+  const $ = sel => document.querySelector(sel);
+  const root = $('#fo-root');
+
+  function pad(n){ return String(n).padStart(4,'0'); }
+  function nextTag(prefix, arr){
+    const max = arr.reduce((m,r)=> Math.max(m, r.seq||0), 0);
+    return { seq: max+1, tagId: prefix + '-' + pad(max+1) };
+  }
+  function fmtDate(d){
+    if(!d) return '—';
+    try{ const dt=new Date(d+'T00:00:00'); return dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }catch(e){return d;}
+  }
+  function esc(s){
+    return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  async function loadAll(){
+    try{
+      const [v,p,t] = await Promise.all([
+        window.storage.get('fo-visits', true).catch(()=>null),
+        window.storage.get('fo-projects', true).catch(()=>null),
+        window.storage.get('fo-tickets', true).catch(()=>null)
+      ]);
+      state.visits = v ? JSON.parse(v.value) : [];
+      state.projects = p ? JSON.parse(p.value) : [];
+      state.tickets = t ? JSON.parse(t.value) : [];
+    }catch(e){
+      console.error('Load error', e);
+    }
+    state.loaded = true;
+    renderAll();
+  }
+
+  async function save(key, data){
+    try{
+      const r = await window.storage.set(key, JSON.stringify(data), true);
+      if(!r) console.error('Save failed for', key);
+    }catch(e){ console.error('Save error', e); }
+  }
+
+  function allClients(){
+    const set = new Set();
+    state.visits.forEach(r=>set.add(r.client));
+    state.projects.forEach(r=>set.add(r.client));
+    state.tickets.forEach(r=>set.add(r.client));
+    return Array.from(set).filter(Boolean).sort();
+  }
+
+  function currentList(){
+    let arr = state[state.tab] || [];
+    let cf = state.clientFilter;
+    if(cf && cf !== 'ALL') arr = arr.filter(r => r.client === cf);
+    return arr.slice().sort((a,b)=> (b.seq||0)-(a.seq||0));
+  }
+
+  // ---------- render ----------
+  function renderAll(){
+    renderSwitch();
+    renderNav();
+    renderClientSelect();
+    renderCounts();
+    renderToolbarTitle();
+    renderBody();
+  }
+
+  function renderSwitch(){
+    const sw = $('#fo-role-switch');
+    sw.classList.toggle('client', state.role==='client');
+    $('#fo-opt-eng').classList.toggle('inactive', state.role!=='engineer');
+    $('#fo-opt-cli').classList.toggle('inactive', state.role!=='client');
+  }
+
+  function renderNav(){
+    const nav = $('#fo-nav');
+    nav.classList.toggle('client', state.role==='client');
+    document.querySelectorAll('.fo-tab').forEach(t=>{
+      t.classList.toggle('active', t.dataset.tab===state.tab);
+    });
+  }
+
+  function renderClientSelect(){
+    const sel = $('#fo-client-select');
+    const clients = allClients();
+    if(state.role==='engineer'){
+      sel.innerHTML = '<option value="ALL">All clients</option>' + clients.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+      sel.value = state.clientFilter;
+      sel.style.display = clients.length ? 'inline-block' : 'none';
+    } else {
+      // client mode: pick which client you are (simulated identity)
+      if(!clients.length){ sel.style.display='none'; return; }
+      sel.innerHTML = clients.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+      if(state.clientFilter==='ALL') state.clientFilter = clients[0];
+      sel.value = state.clientFilter;
+      sel.style.display = 'inline-block';
+    }
+  }
+
+  function renderCounts(){
+    $('#cnt-visits').textContent = state.visits.length;
+    $('#cnt-projects').textContent = state.projects.length;
+    $('#cnt-tickets').textContent = state.tickets.length;
+  }
+
+  function renderToolbarTitle(){
+    const label = {visits:'SITE VISITS', projects:'PROJECTS', tickets:'TICKETS'}[state.tab];
+    $('#fo-toolbar-title').textContent = state.role==='client' ? label + ' — YOUR ACCOUNT' : label;
+    const addBtn = $('#fo-add-btn');
+    if(state.role==='client' && state.tab!=='tickets'){
+      addBtn.style.display = 'none';
+    } else {
+      addBtn.style.display = 'inline-block';
+      addBtn.textContent = state.tab==='tickets' ? '+ RAISE TICKET' : '+ NEW';
+    }
+  }
+
+  function renderBody(){
+    if(!state.loaded){ $('#fo-body').innerHTML = '<div class="fo-loading">LOADING RECORDS…</div>'; return; }
+    const list = currentList();
+    if(!list.length){
+      $('#fo-body').innerHTML = `<div class="fo-empty">NO RECORDS YET — ${state.tab==='tickets'?'raise a ticket to get started':'add your first entry above'}</div>`;
+      return;
+    }
+    let html = '<div class="fo-grid">';
+    list.forEach(r=>{
+      if(state.tab==='visits') html += visitCard(r);
+      if(state.tab==='projects') html += projectCard(r);
+      if(state.tab==='tickets') html += ticketCard(r);
+    });
+    html += '</div>';
+    $('#fo-body').innerHTML = html;
+  }
+
+  function visitCard(r){
+    const statusClass = r.status==='Resolved' ? 'resolved':'open';
+    return `<div class="fo-card status-${statusClass==='open'?'open':'resolved'}">
+      <div class="fo-card-top">
+        <span class="fo-tagid">${r.tagId}</span>
+        <span class="fo-dot ${statusClass}"></span>
+      </div>
+      <div class="fo-card-title">${esc(r.site)}</div>
+      <div class="fo-card-sub">${esc(r.client)} · ${fmtDate(r.date)} · ${esc(r.engineer||'—')}</div>
+      <div class="fo-card-body">${esc(r.summary)}</div>
+      <div class="fo-badge-row">
+        <span class="fo-badge ${r.status==='Resolved'?'teal':'amber'}">${r.status}</span>
+        ${r.nextVisit ? `<span class="fo-badge">NEXT: ${fmtDate(r.nextVisit)}</span>`:''}
+      </div>
+      ${state.role==='engineer' ? `<div class="fo-card-actions">
+        <button class="fo-link-btn" onclick="FO.toggleVisitStatus('${r.id}')">${r.status==='Resolved'?'reopen':'mark resolved'}</button>
+        <button class="fo-link-btn" onclick="FO.deleteRecord('visits','${r.id}')">delete</button>
+      </div>`:''}
+    </div>`;
+  }
+
+  function projectCard(r){
+    const pct = Math.max(0, Math.min(100, r.percentComplete||0));
+    return `<div class="fo-card" style="border-left-color:var(--border-hi)">
+      <div class="fo-card-top">
+        <span class="fo-tagid">${r.tagId}</span>
+        <span class="fo-badge">${esc(r.phase)}</span>
+      </div>
+      <div class="fo-card-title">${esc(r.name)}</div>
+      <div class="fo-card-sub">${esc(r.client)} · target ${fmtDate(r.targetDate)}</div>
+      <div class="fo-progress-track"><div class="fo-progress-fill" style="width:${pct}%"></div></div>
+      <div class="fo-card-sub" style="margin-bottom:10px;">${pct}% complete</div>
+      <div class="fo-card-body">${esc(r.notes||'')}</div>
+      ${state.role==='engineer' ? `<div class="fo-card-actions">
+        <button class="fo-link-btn" onclick="FO.bumpProject('${r.id}')">+10% complete</button>
+        <button class="fo-link-btn" onclick="FO.deleteRecord('projects','${r.id}')">delete</button>
+      </div>`:''}
+    </div>`;
+  }
+
+  function ticketCard(r){
+    const statusClass = r.status==='Resolved'?'resolved':(r.status==='In Progress'?'progress':'open');
+    const priClass = r.priority==='High' ? 'priority-high' : `status-${statusClass}`;
+    return `<div class="fo-card ${priClass}">
+      <div class="fo-card-top">
+        <span class="fo-tagid">${r.tagId}</span>
+        <span class="fo-dot ${statusClass}"></span>
+      </div>
+      <div class="fo-card-title">${esc(r.title)}</div>
+      <div class="fo-card-sub">${esc(r.client)} · raised ${fmtDate(r.raisedDate)}${r.assignedEngineer? ' · '+esc(r.assignedEngineer):''}</div>
+      <div class="fo-card-body">${esc(r.description)}</div>
+      <div class="fo-badge-row">
+        <span class="fo-badge ${r.priority==='High'?'red':(r.priority==='Medium'?'amber':'')}">${r.priority} PRIORITY</span>
+        <span class="fo-badge ${r.status==='Resolved'?'teal':''}">${r.status}</span>
+      </div>
+      ${r.resolutionNotes ? `<div class="fo-card-body" style="color:var(--muted);font-size:12px;">Resolution: ${esc(r.resolutionNotes)}</div>`:''}
+      ${state.role==='engineer' ? `<div class="fo-card-actions">
+        <button class="fo-link-btn" onclick="FO.cycleTicketStatus('${r.id}')">advance status</button>
+        <button class="fo-link-btn" onclick="FO.deleteRecord('tickets','${r.id}')">delete</button>
+      </div>`:''}
+    </div>`;
+  }
+
+  // ---------- actions ----------
+  window.FO = {
+    toggleVisitStatus(id){
+      const r = state.visits.find(x=>x.id===id); if(!r) return;
+      r.status = r.status==='Resolved' ? 'Open' : 'Resolved';
+      save('fo-visits', state.visits); renderBody();
+    },
+    bumpProject(id){
+      const r = state.projects.find(x=>x.id===id); if(!r) return;
+      r.percentComplete = Math.min(100, (r.percentComplete||0)+10);
+      save('fo-projects', state.projects); renderBody();
+    },
+    cycleTicketStatus(id){
+      const r = state.tickets.find(x=>x.id===id); if(!r) return;
+      const order = ['Open','In Progress','Resolved'];
+      const i = order.indexOf(r.status);
+      r.status = order[(i+1)%order.length];
+      save('fo-tickets', state.tickets); renderBody();
+    },
+    deleteRecord(bucket, id){
+      state[bucket] = state[bucket].filter(x=>x.id!==id);
+      save('fo-'+bucket, state[bucket]);
+      renderAll();
+    }
+  };
+
+  // ---------- modal / forms ----------
+  function openModal(html){
+    const overlay = document.createElement('div');
+    overlay.className = 'fo-overlay';
+    overlay.id = 'fo-overlay';
+    overlay.innerHTML = `<div class="fo-modal">${html}</div>`;
+    overlay.addEventListener('click', e=>{ if(e.target===overlay) closeModal(); });
+    document.body.appendChild(overlay);
+  }
+  function closeModal(){
+    const o = document.getElementById('fo-overlay');
+    if(o) o.remove();
+  }
+
+  function openVisitForm(){
+    openModal(`
+      <h3>NEW SITE VISIT</h3>
+      <div class="fo-field-row">
+        <div class="fo-field"><label>CLIENT</label><input id="f-client"/></div>
+        <div class="fo-field"><label>SITE / LOCATION</label><input id="f-site"/></div>
+      </div>
+      <div class="fo-field-row">
+        <div class="fo-field"><label>DATE</label><input type="date" id="f-date"/></div>
+        <div class="fo-field"><label>ENGINEER</label><input id="f-engineer"/></div>
+      </div>
+      <div class="fo-field"><label>SUMMARY OF WORK</label><textarea id="f-summary"></textarea></div>
+      <div class="fo-field"><label>NEXT VISIT DUE (optional)</label><input type="date" id="f-next"/></div>
+      <div class="fo-modal-actions">
+        <button class="fo-btn ghost" onclick="FOForm.cancel()">Cancel</button>
+        <button class="fo-btn" onclick="FOForm.saveVisit()">Save visit</button>
+      </div>
+    `);
+  }
+
+  function openProjectForm(){
+    openModal(`
+      <h3>NEW PROJECT</h3>
+      <div class="fo-field"><label>PROJECT NAME</label><input id="f-name"/></div>
+      <div class="fo-field-row">
+        <div class="fo-field"><label>CLIENT</label><input id="f-client"/></div>
+        <div class="fo-field"><label>TARGET DATE</label><input type="date" id="f-target"/></div>
+      </div>
+      <div class="fo-field"><label>PHASE</label>
+        <select id="f-phase">
+          <option>Design</option><option>Panel Build</option><option>Programming</option>
+          <option>Commissioning</option><option>Handover</option>
+        </select>
+      </div>
+      <div class="fo-field"><label>NOTES</label><textarea id="f-notes"></textarea></div>
+      <div class="fo-modal-actions">
+        <button class="fo-btn ghost" onclick="FOForm.cancel()">Cancel</button>
+        <button class="fo-btn" onclick="FOForm.saveProject()">Save project</button>
+      </div>
+    `);
+  }
+
+  function openTicketForm(){
+    openModal(`
+      <h3>${state.role==='client'?'RAISE A TICKET':'NEW TICKET'}</h3>
+      <div class="fo-field-row">
+        <div class="fo-field"><label>CLIENT</label><input id="f-client" value="${state.role==='client'?esc(state.clientFilter):''}" ${state.role==='client'?'readonly':''}/></div>
+        <div class="fo-field"><label>PRIORITY</label>
+          <select id="f-priority"><option>Low</option><option selected>Medium</option><option>High</option></select>
+        </div>
+      </div>
+      <div class="fo-field"><label>TITLE</label><input id="f-title"/></div>
+      <div class="fo-field"><label>DESCRIPTION</label><textarea id="f-description"></textarea></div>
+      <div class="fo-modal-actions">
+        <button class="fo-btn ghost" onclick="FOForm.cancel()">Cancel</button>
+        <button class="fo-btn teal" onclick="FOForm.saveTicket()">Submit</button>
+      </div>
+    `);
+  }
+
+  window.FOForm = {
+    cancel(){ closeModal(); },
+    saveVisit(){
+      const client = $('#f-client').value.trim();
+      const site = $('#f-site').value.trim();
+      if(!client || !site){ alert('Client and site are required.'); return; }
+      const {seq, tagId} = nextTag('SV', state.visits);
+      state.visits.push({
+        id: 'v'+Date.now(), seq, tagId, client, site,
+        date: $('#f-date').value || new Date().toISOString().slice(0,10),
+        engineer: $('#f-engineer').value.trim(),
+        summary: $('#f-summary').value.trim(),
+        nextVisit: $('#f-next').value || null,
+        status: 'Open'
+      });
+      save('fo-visits', state.visits);
+      closeModal(); renderAll();
+    },
+    saveProject(){
+      const name = $('#f-name').value.trim();
+      const client = $('#f-client').value.trim();
+      if(!name || !client){ alert('Project name and client are required.'); return; }
+      const {seq, tagId} = nextTag('PRJ', state.projects);
+      state.projects.push({
+        id:'p'+Date.now(), seq, tagId, name, client,
+        phase: $('#f-phase').value,
+        targetDate: $('#f-target').value || null,
+        notes: $('#f-notes').value.trim(),
+        percentComplete: 0
+      });
+      save('fo-projects', state.projects);
+      closeModal(); renderAll();
+    },
+    saveTicket(){
+      const client = $('#f-client').value.trim();
+      const title = $('#f-title').value.trim();
+      if(!client || !title){ alert('Client and title are required.'); return; }
+      const {seq, tagId} = nextTag('TKT', state.tickets);
+      state.tickets.push({
+        id:'t'+Date.now(), seq, tagId, client, title,
+        description: $('#f-description').value.trim(),
+        priority: $('#f-priority').value,
+        status: 'Open',
+        raisedDate: new Date().toISOString().slice(0,10)
+      });
+      save('fo-tickets', state.tickets);
+      closeModal(); renderAll();
+    }
+  };
+
+  // ---------- events ----------
+  $('#fo-role-switch').addEventListener('click', ()=>{
+    state.role = state.role==='engineer' ? 'client' : 'engineer';
+    state.clientFilter = 'ALL';
+    renderAll();
+  });
+
+  document.querySelectorAll('.fo-tab').forEach(t=>{
+    t.addEventListener('click', ()=>{
+      state.tab = t.dataset.tab;
+      renderAll();
+    });
+  });
+
+  $('#fo-client-select').addEventListener('change', e=>{
+    state.clientFilter = e.target.value;
+    renderBody();
+  });
+
+  $('#fo-add-btn').addEventListener('click', ()=>{
+    if(state.tab==='visits') openVisitForm();
+    if(state.tab==='projects') openProjectForm();
+    if(state.tab==='tickets') openTicketForm();
+  });
+
+  loadAll();
+})();
+</script>
